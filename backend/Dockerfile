@@ -1,0 +1,1 @@
+# Application ka container banata hai.  , Dockerfile = image

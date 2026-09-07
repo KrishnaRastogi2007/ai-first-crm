@@ -1,0 +1,10 @@
+"
+Multiple services together run kar sakta hai:
+
+FastAPI
+PostgreSQL
+Redis
+etc.
+
+Compose = multiple containers
+"
