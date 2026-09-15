@@ -22,11 +22,11 @@ etc. connect honge.
 from fastapi import FastAPI
 
 from app.core.config import settings
-from app.api.v1.hcps import router as hcp_router
-from app.api.v1.interactions import router as interaction_router
-from app.modules.auth.models import Users
-from app.api.v1.auth import router as user_router
-from app.api.v1.followups import router as followup_router
+# from app.api.v1.hcps import router as hcp_router
+# from app.api.v1.interactions import router as interaction_router
+# from app.api.v1.auth import router as user_router
+# from app.api.v1.followups import router as followup_router
+from app.api.router import api_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -35,22 +35,7 @@ app = FastAPI(
 
 
 app.include_router(
-    hcp_router,
-    prefix="/api/v1"
-)
-
-app.include_router(
-    interaction_router,
-    prefix="/api/v1"
-)
-
-app.include_router(
-    user_router,
-    prefix="/api/v1"
-)
-
-app.include_router(
-    followup_router,
+    api_router,
     prefix="/api/v1"
 )
 
