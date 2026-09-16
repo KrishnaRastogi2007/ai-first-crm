@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.core.dependencies import get_user_service
+from app.core.dependencies import get_user_service , get_current_user
 
 from app.modules.auth.service import UserService
 
@@ -13,6 +13,13 @@ router = APIRouter()
 @router.get("/users",response_model=list[UserResponse])
 async def get_users(service: UserService = Depends(get_user_service)):
     return await service.get_all_users()
+
+
+@router.get("/users/me", response_model=UserResponse)
+async def get_my_profile(
+    current_user = Depends(get_current_user)
+):
+    return current_user
 
 
 @router.get("/users/{id}",response_model=UserResponse)

@@ -10,27 +10,17 @@ class UserRepository:
         self.db = db
 
     async def get_all(self):
-        result = await self.db.execute(
-            select(Users)
-        )
+        result = await self.db.execute(select(Users))
 
         return result.scalars().all()
 
     async def get_by_id(self, user_id: int):
-        result = await self.db.execute(
-            select(Users).where(
-                Users.id == user_id
-            )
-        )
+        result = await self.db.execute(select(Users).where(Users.id == user_id))
 
         return result.scalar_one_or_none()
 
     async def get_by_email(self, email: str):
-        result = await self.db.execute(
-            select(Users).where(
-                Users.email == email
-            )
-        )
+        result = await self.db.execute(select(Users).where(Users.email == email))
 
         return result.scalar_one_or_none()
 

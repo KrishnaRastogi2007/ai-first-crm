@@ -12,9 +12,13 @@ class UserResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     name: str
-    email: str
+    email: EmailStr
     role: str
     created_at: datetime
     updated_at: datetime
     phone: str | None
     is_active: bool
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str

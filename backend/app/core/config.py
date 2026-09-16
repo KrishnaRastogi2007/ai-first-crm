@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     APP_NAME:str
     APP_ENV:str
     DATABASE_URL:str
+    JWT_SECRET_KEY: str
 
     model_config = SettingsConfigDict(
         env_file= "backend/.env"
