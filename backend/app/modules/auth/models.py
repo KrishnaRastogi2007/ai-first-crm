@@ -1,3 +1,21 @@
+# modules Folder Contains Business/domain Logic. Here We Put Different Business Areas Of Project To Saperated Folders .
+"""auth
+User/login/security related functionality.
+
+hcp:-- Healthcare Professional related functionality.
+
+interaction:-- Doctor/HCP ke saath interaction.
+
+followup:-- Interaction ke baad follow-up.
+
+Schema → Request/Response shape
+Model  → Database table
+Service → Business logic
+Repository → Database operations
+"""
+# models.py --> it maps python class(Users) to database tables , structure  , It Is The SQLAlchemy Model .
+
+
 from sqlalchemy import String , Integer , Boolean , DateTime , func
 from sqlalchemy.orm import Mapped , mapped_column
 from app.db.base import Base
