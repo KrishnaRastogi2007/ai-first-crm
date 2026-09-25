@@ -31,7 +31,7 @@ class UserService:
             name=user_data.name,
             email=user_data.email,
             password_hash=hashed_password,
-            role=user_data.role,
+            role="field_representative",
             phone=user_data.phone
         )
 

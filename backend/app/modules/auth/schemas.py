@@ -5,7 +5,6 @@ class UserCreate(BaseModel):
     name:str
     email:EmailStr
     password:str
-    role:str = "sales_representative"
     phone:str | None = None
 
 class UserResponse(BaseModel):

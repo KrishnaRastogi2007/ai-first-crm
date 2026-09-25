@@ -10,10 +10,7 @@ router = APIRouter()
 
 
 @router.post("/auth/register", response_model=UserResponse)
-async def register_user(
-    user_data: UserCreate,
-    service: UserService = Depends(get_user_service)
-):
+async def register_user(user_data: UserCreate,service: UserService = Depends(get_user_service)):
     user = await service.create_user(user_data)
 
     if user is None:
@@ -26,10 +23,7 @@ async def register_user(
 
 
 @router.post("/auth/login")
-async def login_user(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    service: UserService = Depends(get_user_service)
-):
+async def login_user(form_data: OAuth2PasswordRequestForm = Depends(),service: UserService = Depends(get_user_service)):
     result = await service.login_user(
         form_data.username,
         form_data.password

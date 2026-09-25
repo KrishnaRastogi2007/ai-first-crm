@@ -5,7 +5,6 @@ from pydantic import BaseModel, ConfigDict
 
 class InteractionCreate(BaseModel):
     hcp_id: int
-    user_id: int
     interaction_type: str
     subject: str
     notes: str | None = None

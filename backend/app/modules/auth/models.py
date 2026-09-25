@@ -48,7 +48,7 @@ class Users(Base):
     role:Mapped[str] = mapped_column(
         String(100),
         nullable=False,
-        default= "sales_representative"
+        default= "field_representative"
     )
 
     created_at:Mapped[datetime]= mapped_column(

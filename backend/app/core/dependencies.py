@@ -23,6 +23,7 @@ from app.modules.auth.service import UserService
 from app.modules.followup.repository import FollowUpRepository
 from app.modules.followup.service import FollowUpService
 from app.core.security import decode_access_token
+from app.core.authorization import Permission, has_permission
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
@@ -82,3 +83,31 @@ async def get_current_user(token: str = Depends(oauth2_scheme),db: AsyncSession 
         )
 
     return user
+
+def require_roles(*allowed_roles:str):
+    async def role_checker(
+            current_user =Depends(get_current_user)
+    ):
+        if current_user.role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You Do Not Have Permission To Perform This Action."
+            )
+        return current_user
+    return role_checker
+
+def require_permission(permission: Permission):
+
+    async def permission_checker(
+        current_user = Depends(get_current_user)
+    ):
+        if not has_permission(current_user.role, permission):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have permission to perform this action"
+            )
+
+        return current_user
+
+    return permission_checker
+        
