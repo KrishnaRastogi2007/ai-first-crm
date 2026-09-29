@@ -1,1 +1,30 @@
-# Python project configuration
+# Python project central configuration file
+# Project metadata and development tool configuration
+
+
+[project]
+name = "ai-first-crm"
+version = "0.1.0"
+description = "AI-First CRM for Healthcare Professionals"
+requires-python = ">=3.11"
+
+
+# Pytest configuration
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+
+# Ruff configuration
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+
+# Ruff Formatter configuration
+[tool.ruff.format]
+quote-style = "double"

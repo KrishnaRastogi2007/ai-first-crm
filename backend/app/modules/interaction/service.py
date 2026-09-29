@@ -22,13 +22,12 @@ Create / Update / Delete
 Repository ko call
 """
 
-from app.modules.interaction.repository import InteractionRepository
 from app.modules.interaction.models import Interaction
+from app.modules.interaction.repository import InteractionRepository
 from app.modules.interaction.schemas import InteractionCreate
 
 
 class InteractionService:
-
     def __init__(self, repository: InteractionRepository):
         self.repository = repository
 
@@ -39,9 +38,7 @@ class InteractionService:
         return await self.repository.get_by_id(interaction_id)
 
     async def create_interaction(
-        self,
-        interaction_data: InteractionCreate,
-        user_id: int
+        self, interaction_data: InteractionCreate, user_id: int
     ):
         interaction = Interaction(
             hcp_id=interaction_data.hcp_id,
@@ -49,16 +46,13 @@ class InteractionService:
             interaction_type=interaction_data.interaction_type,
             subject=interaction_data.subject,
             notes=interaction_data.notes,
-            interaction_date=interaction_data.interaction_date
+            interaction_date=interaction_data.interaction_date,
         )
 
         return await self.repository.create(interaction)
 
     async def update_interaction(
-        self,
-        interaction_id: int,
-        interaction_data: InteractionCreate,
-        user_id: int
+        self, interaction_id: int, interaction_data: InteractionCreate, user_id: int
     ):
         interaction = await self.repository.get_by_id(interaction_id)
 

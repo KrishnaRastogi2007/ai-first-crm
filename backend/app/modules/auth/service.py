@@ -1,12 +1,10 @@
+from app.core.security import create_access_token, hash_password, verify_password
 from app.modules.auth.models import Users
 from app.modules.auth.repository import UserRepository
 from app.modules.auth.schemas import UserCreate
 
-from app.core.security import hash_password , verify_password , create_access_token
-
 
 class UserService:
-
     def __init__(self, repository: UserRepository):
         self.repository = repository
 
@@ -18,9 +16,7 @@ class UserService:
 
     async def create_user(self, user_data: UserCreate):
 
-        existing_user = await self.repository.get_by_email(
-            user_data.email
-        )
+        existing_user = await self.repository.get_by_email(user_data.email)
 
         if existing_user is not None:
             return None
@@ -32,18 +28,18 @@ class UserService:
             email=user_data.email,
             password_hash=hashed_password,
             role="field_representative",
-            phone=user_data.phone
+            phone=user_data.phone,
         )
 
         return await self.repository.create(user)
 
-    async def login_user(self , email:str , password:str):
-        user =await self.repository.get_by_email(email)
+    async def login_user(self, email: str, password: str):
+        user = await self.repository.get_by_email(email)
 
         if user is None:
             return None
 
-        password_valid =await verify_password(password , user.password_hash)
+        password_valid = await verify_password(password, user.password_hash)
 
         if not password_valid:
             return None
@@ -51,9 +47,6 @@ class UserService:
         if not user.is_active:
             return None
 
-        access_token =create_access_token(user.id)
+        access_token = create_access_token(user.id)
 
-        return{
-            "access_token":access_token,
-            "token_type":"bearer"
-        }
+        return {"access_token": access_token, "token_type": "bearer"}

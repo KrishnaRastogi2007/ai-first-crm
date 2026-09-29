@@ -258,3 +258,11 @@ GET http://127.0.0.1:8000/api/v1/interactions
 GET http://127.0.0.1:8000/api/v1/followups
 GET http://127.0.0.1:8000/api/v1/users
 There is currently no usable frontend startup command because frontend/package.json is empty. The React/Vite application needs to be completed before it can be run with npm install and npm run dev.
+
+
+
+
+# Ruff
+I001 = code style/import organization
+E501 = line too long
+F401 = unused import

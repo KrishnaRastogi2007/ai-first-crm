@@ -26,6 +26,7 @@ Repository = Database worker
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.hcp.models import HCP
 
 
@@ -34,9 +35,7 @@ class HCPRepository:
         self.db = db
 
     async def get_all(self):
-        result = await self.db.execute(
-            select(HCP)
-        )
+        result = await self.db.execute(select(HCP))
 
         return result.scalars().all()
 
@@ -48,21 +47,21 @@ class HCPRepository:
         await self.db.refresh(hcp)
 
         return hcp
+
     async def update(self, hcp: HCP):
-     await self.db.commit()
+        await self.db.commit()
 
-     await self.db.refresh(hcp)
+        await self.db.refresh(hcp)
 
-     return hcp
+        return hcp
 
     async def delete(self, hcp: HCP):
-     await self.db.delete(hcp)
+        await self.db.delete(hcp)
 
-     await self.db.commit()
+        await self.db.commit()
 
-     return True
-    async def get_by_id(self,hcp_id:int):
-        result = await self.db.execute(
-            select(HCP).where(HCP.id == hcp_id)
-        )
+        return True
+
+    async def get_by_id(self, hcp_id: int):
+        result = await self.db.execute(select(HCP).where(HCP.id == hcp_id))
         return result.scalar_one_or_none()

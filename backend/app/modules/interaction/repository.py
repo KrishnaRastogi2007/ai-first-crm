@@ -31,22 +31,17 @@ from app.modules.interaction.models import Interaction
 
 
 class InteractionRepository:
-
     def __init__(self, db: AsyncSession):
         self.db = db
 
     async def get_all(self):
-        result = await self.db.execute(
-            select(Interaction)
-        )
+        result = await self.db.execute(select(Interaction))
 
         return result.scalars().all()
 
     async def get_by_id(self, interaction_id: int):
         result = await self.db.execute(
-            select(Interaction).where(
-                Interaction.id == interaction_id
-            )
+            select(Interaction).where(Interaction.id == interaction_id)
         )
 
         return result.scalar_one_or_none()

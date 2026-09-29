@@ -4,7 +4,6 @@ from app.modules.followup.schemas import FollowUpCreate
 
 
 class FollowUpService:
-
     def __init__(self, repository: FollowUpRepository):
         self.repository = repository
 
@@ -21,20 +20,14 @@ class FollowUpService:
             assigned_to=followup_data.assigned_to,
             due_date=followup_data.due_date,
             status=followup_data.status,
-            notes=followup_data.notes
+            notes=followup_data.notes,
         )
 
         return await self.repository.create(followup)
 
-    async def update_followup(
-        self,
-        followup_id: int,
-        followup_data: FollowUpCreate
-    ):
+    async def update_followup(self, followup_id: int, followup_data: FollowUpCreate):
 
-        followup = await self.repository.get_by_id(
-            followup_id
-        )
+        followup = await self.repository.get_by_id(followup_id)
 
         if followup is None:
             return None
@@ -49,9 +42,7 @@ class FollowUpService:
 
     async def delete_followup(self, followup_id: int):
 
-        followup = await self.repository.get_by_id(
-            followup_id
-        )
+        followup = await self.repository.get_by_id(followup_id)
 
         if followup is None:
             return None

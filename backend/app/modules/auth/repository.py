@@ -5,7 +5,6 @@ from app.modules.auth.models import Users
 
 
 class UserRepository:
-
     def __init__(self, db: AsyncSession):
         self.db = db
 

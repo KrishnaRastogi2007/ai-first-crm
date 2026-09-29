@@ -31,64 +31,52 @@ ROLE_PERMISSIONS = MappingProxyType(
         "admin": frozenset(
             {
                 Permission.USERS_READ,
-
                 Permission.HCP_READ,
                 Permission.HCP_CREATE,
                 Permission.HCP_UPDATE,
                 Permission.HCP_DELETE,
-
                 Permission.INTERACTION_READ,
                 Permission.INTERACTION_CREATE,
                 Permission.INTERACTION_UPDATE,
                 Permission.INTERACTION_DELETE,
-
                 Permission.FOLLOWUP_READ,
                 Permission.FOLLOWUP_CREATE,
                 Permission.FOLLOWUP_UPDATE,
                 Permission.FOLLOWUP_DELETE,
-
                 Permission.AUDIT_READ,
             }
         ),
-
         "sales_manager": frozenset(
             {
                 Permission.USERS_READ,
-
                 Permission.HCP_READ,
                 Permission.HCP_CREATE,
                 Permission.HCP_UPDATE,
                 Permission.HCP_DELETE,
-
                 Permission.INTERACTION_READ,
                 Permission.INTERACTION_CREATE,
                 Permission.INTERACTION_UPDATE,
                 Permission.INTERACTION_DELETE,
-
                 Permission.FOLLOWUP_READ,
                 Permission.FOLLOWUP_CREATE,
                 Permission.FOLLOWUP_UPDATE,
                 Permission.FOLLOWUP_DELETE,
             }
         ),
-
         "field_representative": frozenset(
             {
                 Permission.HCP_READ,
                 Permission.HCP_CREATE,
                 Permission.HCP_UPDATE,
                 Permission.HCP_DELETE,
-
                 Permission.INTERACTION_READ,
                 Permission.INTERACTION_CREATE,
                 Permission.INTERACTION_UPDATE,
-
                 Permission.FOLLOWUP_READ,
                 Permission.FOLLOWUP_CREATE,
                 Permission.FOLLOWUP_UPDATE,
             }
         ),
-
         "compliance_officer": frozenset(
             {
                 Permission.AUDIT_READ,
@@ -98,7 +86,7 @@ ROLE_PERMISSIONS = MappingProxyType(
 )
 
 
-def has_permission(role: str,permission: Permission) -> bool:
+def has_permission(role: str, permission: Permission) -> bool:
     """Helper utility to check if a given role possesses a specific permission."""
 
-    return (role in ROLE_PERMISSIONS and  permission in ROLE_PERMISSIONS[role])
+    return role in ROLE_PERMISSIONS and permission in ROLE_PERMISSIONS[role]
