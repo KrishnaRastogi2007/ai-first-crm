@@ -1,18 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,Query
 from app.core.authorization import Permission
 from app.core.dependencies import get_hcp_service, require_permission
-from app.modules.hcp.schemas import HCPCreate, HCPResponse
+from app.modules.hcp.schemas import HCPCreate, HCPResponse,PaginatedHCPResponse
 from app.modules.hcp.service import HCPService
 
 router = APIRouter()
 
 
-@router.get("/hcps",response_model=list[HCPResponse])
+@router.get("/hcps",response_model=PaginatedHCPResponse)
 async def get_hcps(
+    page:int = Query(1 ,ge=1),
+    limit: int = Query(20 ,ge=1, le=50),
     service: HCPService = Depends(get_hcp_service),
     current_user=Depends(require_permission(Permission.HCP_READ)),
 ):
-    return await service.get_all_hcps()
+    return await service.get_all_hcps(page,limit)
 
 
 @router.get("/hcps/{id}",response_model=HCPResponse)

@@ -29,3 +29,11 @@ class HCPResponse(BaseModel):
     email: str | None = None
     phone: str | None = None
     organization: str | None = None
+
+
+class PaginatedHCPResponse(BaseModel):
+    items: list[HCPResponse]
+    page: int
+    limit: int
+    total: int
+    pages: int

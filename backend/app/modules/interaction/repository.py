@@ -1,30 +1,4 @@
-"""
-Repository ka kaam:
-
-Database se baat karna.
-
-Example:
-
-service.py
-     ↓
-repository.py
-     ↓
-PostgreSQL
-
-Repository:
-
-get_all()
-get_by_id()
-create()
-update()
-delete()
-
-Memory:
-
-Repository = Database worker
-"""
-
-from sqlalchemy import select
+from sqlalchemy import select , func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.interaction.models import Interaction
@@ -34,10 +8,21 @@ class InteractionRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def get_all(self):
-        result = await self.db.execute(select(Interaction))
+    async def get_all(self,limit:int,offset:int):
+        result = await self.db.execute(
+            select(Interaction)
+            .order_by(Interaction.id)
+            .offset(offset)
+            .limit(limit)
+        )
 
-        return result.scalars().all()
+        items = result.scalars().all()
+        count_result = await self.db.execute(
+            select(func.count()).select_from(Interaction)
+        )
+        total = count_result.scalar_one()
+
+        return items,total
 
     async def get_by_id(self, interaction_id: int):
         result = await self.db.execute(

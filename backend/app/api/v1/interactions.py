@@ -1,19 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException
-
+from fastapi import APIRouter, Depends, HTTPException,Query
 from app.core.authorization import Permission
 from app.core.dependencies import get_interaction_service, require_permission
-from app.modules.interaction.schemas import InteractionCreate, InteractionResponse
+from app.modules.interaction.schemas import InteractionCreate, InteractionResponse,PaginatedInteractionResponse
 from app.modules.interaction.service import InteractionService
 
 router = APIRouter()
 
 
-@router.get("/interactions", response_model=list[InteractionResponse])
+@router.get("/interactions", response_model=PaginatedInteractionResponse)
 async def get_interactions(
+    page:int = Query(1,ge=1),
+    limit:int = Query(20,ge=1,le=50),
     service: InteractionService = Depends(get_interaction_service),
     current_user=Depends(require_permission(Permission.INTERACTION_READ)),
 ):
-    return await service.get_all_interactions()
+    return await service.get_all_interactions(page,limit)
 
 
 @router.get("/interactions/{id}", response_model=InteractionResponse)

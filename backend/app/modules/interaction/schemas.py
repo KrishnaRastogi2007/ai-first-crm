@@ -23,3 +23,10 @@ class InteractionResponse(BaseModel):
     interaction_date: datetime
     created_at: datetime
     updated_at: datetime
+
+class PaginatedInteractionResponse(BaseModel):
+    items: list[InteractionResponse]
+    page: int
+    limit: int
+    total: int
+    pages: int

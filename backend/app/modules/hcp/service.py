@@ -1,37 +1,3 @@
-"""
-Service actual business rules rakhti hai.
-
-Example:
-
-API
- ↓
-Service
- ↓
-Repository
- ↓
-DB
-
-Suppose interaction log karna hai.
-
-Service decide karegi:
-
-HCP exists?
-        ↓
-Interaction valid?
-        ↓
-User allowed?
-        ↓
-Create interaction
-        ↓
-Create audit log
-        ↓
-Schedule follow-up?
-
-Memory:
-
-Service = decision maker
-"""
-
 from app.modules.hcp.models import HCP
 from app.modules.hcp.repository import HCPRepository
 from app.modules.hcp.schemas import HCPCreate
@@ -41,8 +7,22 @@ class HCPService:
     def __init__(self, repository: HCPRepository):
         self.repository = repository
 
-    async def get_all_hcps(self):
-        return await self.repository.get_all()
+    async def get_all_hcps(self,page:int,limit:int):
+        # Page --> User Requeasted Page.
+        # limit --> ek page mein maximum HCPs.
+        offset = (page- 1)*limit
+        items,total = await self.repository.get_all(
+            limit=limit, # Current Page HCPs
+            offset=offset,# database mein total HCPs
+        )
+        pages = (total + limit - 1) // limit
+        return{
+            "items":items,
+            "page":page,
+            "limit":limit,
+            "total":total,
+            "pages":pages
+        }
 
     async def get_hcp_by_id(self, hcp_id: int):
         return await self.repository.get_by_id(hcp_id)

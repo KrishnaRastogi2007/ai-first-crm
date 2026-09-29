@@ -1,27 +1,3 @@
-"""
-Service actual business rules rakhti hai.
-
-Example:
-
-API
- ↓
-Service
- ↓
-Repository
- ↓
-PostgreSQL
-
-Interaction Service decide karegi:
-
-HCP/User related checks
-        ↓
-Interaction valid?
-        ↓
-Create / Update / Delete
-        ↓
-Repository ko call
-"""
-
 from app.modules.interaction.models import Interaction
 from app.modules.interaction.repository import InteractionRepository
 from app.modules.interaction.schemas import InteractionCreate
@@ -31,8 +7,22 @@ class InteractionService:
     def __init__(self, repository: InteractionRepository):
         self.repository = repository
 
-    async def get_all_interactions(self):
-        return await self.repository.get_all()
+    async def get_all_interactions(self,page:int,limit:int):
+        offset = (page-1)*limit
+        items,total = await self.repository.get_all(
+            limit=limit,
+            offset=offset,
+        )
+        pages = (total + limit - 1) // limit
+
+        return{
+            "items":items,
+            "page":page,
+            "limit":limit,
+            "total":total,
+            "pages":pages,
+
+        }
 
     async def get_interaction_by_id(self, interaction_id: int):
         return await self.repository.get_by_id(interaction_id)
