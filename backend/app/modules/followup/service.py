@@ -7,8 +7,20 @@ class FollowUpService:
     def __init__(self, repository: FollowUpRepository):
         self.repository = repository
 
-    async def get_all_followups(self):
-        return await self.repository.get_all()
+    async def get_all_followups(self,page:int,limit:int):
+        offset = (page - 1)*limit
+        items,total = await self.repository.get_all(
+            limit=limit,
+            offset=offset,
+        )
+        pages = (total + limit - 1) // limit
+        return{
+            "items":items,
+            "page":page,
+            "limit":limit,
+            "total":total,
+            "pages":pages
+        }
 
     async def get_followup_by_id(self, followup_id: int):
         return await self.repository.get_by_id(followup_id)

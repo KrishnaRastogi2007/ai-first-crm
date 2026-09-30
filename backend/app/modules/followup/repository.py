@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select,func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.followup.models import FollowUp
@@ -8,9 +8,20 @@ class FollowUpRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def get_all(self):
-        result = await self.db.execute(select(FollowUp))
-        return result.scalars().all()
+    async def get_all(self,limit:int,offset:int):
+        result = await self.db.execute(
+            select(FollowUp)
+            .order_by(FollowUp.id)
+            .offset(offset)
+            .limit(limit)
+        )
+
+        items = result.scalars().all()
+        count_result = await self.db.execute(
+            select(func.count()).select_from(FollowUp)
+        )
+        total=count_result.scalar_one()
+        return items,total
 
     async def get_by_id(self, followup_id: int):
         result = await self.db.execute(

@@ -25,3 +25,10 @@ class UserResponse(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+
+class PaginatedUserResponse(BaseModel):
+    items: list[UserResponse]
+    page: int
+    limit: int
+    total: int
+    pages: int

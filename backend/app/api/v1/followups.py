@@ -1,22 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException
-
+from fastapi import APIRouter, Depends, HTTPException,Query
 from app.core.authorization import Permission
-from app.core.dependencies import (
-    get_followup_service,
-    require_permission,
-)
-from app.modules.followup.schemas import FollowUpCreate, FollowUpResponse
+from app.core.dependencies import get_followup_service,require_permission
+from app.modules.followup.schemas import FollowUpCreate, FollowUpResponse,PaginatedFollowupResponse
 from app.modules.followup.service import FollowUpService
 
 router = APIRouter()
 
 
-@router.get("/followups", response_model=list[FollowUpResponse])
+@router.get("/followups", response_model=PaginatedFollowupResponse)
 async def get_followups(
+    page:int = Query(1,ge=1),
+    limit:int = Query(20,ge=1,le=50),
     service: FollowUpService = Depends(get_followup_service),
     current_user=Depends(require_permission(Permission.FOLLOWUP_READ)),
 ):
-    return await service.get_all_followups()
+    return await service.get_all_followups(page,limit)
 
 
 @router.get("/followups/{id}", response_model=FollowUpResponse)

@@ -22,3 +22,12 @@ class FollowUpResponse(BaseModel):
     notes: str | None
     created_at: datetime
     updated_at: datetime
+
+class PaginatedFollowupResponse(BaseModel):
+    items:list[FollowUpResponse]
+    page:int
+    limit:int
+    total:int
+    pages:int
+    
+

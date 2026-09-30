@@ -1,19 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException
-
+from fastapi import APIRouter, Depends, HTTPException,Query
 from app.core.authorization import Permission
 from app.core.dependencies import get_current_user, get_user_service, require_permission
-from app.modules.auth.schemas import UserResponse
+from app.modules.auth.schemas import UserResponse,PaginatedUserResponse
 from app.modules.auth.service import UserService
 
 router = APIRouter()
 
 
-@router.get("/users", response_model=list[UserResponse])
+@router.get("/users", response_model=PaginatedUserResponse)
 async def get_users(
+    page:int = Query(1,ge=1),
+    limit:int = Query(20,ge=1,le=50),
     service: UserService = Depends(get_user_service),
     current_user=Depends(require_permission(Permission.USERS_READ)),
 ):
-    return await service.get_all_users()
+    return await service.get_all_users(page,limit)
 
 
 @router.get("/users/me", response_model=UserResponse)

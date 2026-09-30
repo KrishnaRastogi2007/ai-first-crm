@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select,func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.auth.models import Users
@@ -8,10 +8,20 @@ class UserRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def get_all(self):
-        result = await self.db.execute(select(Users))
+    async def get_all(self,limit:int,offset:int):
+        result = await self.db.execute(
+            select(Users)
+            .order_by(Users.id)
+            .offset(offset)
+            .limit(limit)
+            )
+        items = result.scalars().all()
+        count_result = await self.db.execute(
+            select(func.count()).select_from(Users)
+        )
+        total = count_result.scalar_one()
 
-        return result.scalars().all()
+        return items,total
 
     async def get_by_id(self, user_id: int):
         result = await self.db.execute(select(Users).where(Users.id == user_id))

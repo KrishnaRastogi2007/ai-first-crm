@@ -8,8 +8,20 @@ class UserService:
     def __init__(self, repository: UserRepository):
         self.repository = repository
 
-    async def get_all_users(self):
-        return await self.repository.get_all()
+    async def get_all_users(self,page:int,limit:int):
+        offset = (page - 1) * limit
+        items,total = await self.repository.get_all(
+            limit=limit,
+            offset=offset,
+        )
+        pages = (total + limit - 1) // limit
+        return{
+            "items":items,
+            "page":page,
+            "limit":limit,
+            "total":total,
+            "pages":pages
+        }
 
     async def get_user_by_id(self, user_id: int):
         return await self.repository.get_by_id(user_id)
