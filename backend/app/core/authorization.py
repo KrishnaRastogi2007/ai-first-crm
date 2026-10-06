@@ -7,6 +7,7 @@ class Permission(str, Enum):
     """System permissions enforced across API endpoints."""
 
     USERS_READ = "users:read"
+    USERS_MANAGE ="users:manage"
 
     HCP_READ = "hcps:read"
     HCP_CREATE = "hcps:create"
@@ -31,6 +32,7 @@ ROLE_PERMISSIONS = MappingProxyType(
         "admin": frozenset(
             {
                 Permission.USERS_READ,
+                Permission.USERS_MANAGE,
                 Permission.HCP_READ,
                 Permission.HCP_CREATE,
                 Permission.HCP_UPDATE,

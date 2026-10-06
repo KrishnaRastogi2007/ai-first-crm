@@ -1,16 +1,3 @@
-"""
-Database connection/session.(done)
-
-FastAPI
-   ↓
-database.py
-   ↓
-PostgreSQL
-
-Memory:
-database.py = DB connection
-"""
-
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.core.config import settings

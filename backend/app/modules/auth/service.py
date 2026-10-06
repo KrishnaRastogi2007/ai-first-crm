@@ -1,7 +1,7 @@
 from app.core.security import create_access_token, hash_password, verify_password
 from app.modules.auth.models import Users
 from app.modules.auth.repository import UserRepository
-from app.modules.auth.schemas import UserCreate
+from app.modules.auth.schemas import UserCreate,UserRole
 
 
 class UserService:
@@ -62,3 +62,22 @@ class UserService:
         access_token = create_access_token(user.id)
 
         return {"access_token": access_token, "token_type": "bearer"}
+
+    async def update_user_role(self, user_id: int, role: UserRole):
+       user = await self.repository.get_by_id(user_id)
+
+       if user is None:
+        return None
+
+       if user.role == "admin" and role.value != "admin":
+        active_admins = await self.repository.count_active_admins()
+
+        if active_admins <= 1:
+            raise ValueError("Cannot remove the last active admin")
+
+        user.role = role.value
+
+       await self.repository.db.commit()
+       await self.repository.db.refresh(user)
+
+       return user

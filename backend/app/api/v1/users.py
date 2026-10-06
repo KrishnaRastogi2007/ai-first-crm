@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException,Query
 from app.core.authorization import Permission
 from app.core.dependencies import get_current_user, get_user_service, require_permission
-from app.modules.auth.schemas import UserResponse,PaginatedUserResponse
+from app.modules.auth.schemas import UserResponse,PaginatedUserResponse,UserRoleUpdate
 from app.modules.auth.service import UserService
 
 router = APIRouter()
@@ -32,5 +32,35 @@ async def get_user(
 
     if user is None:
         raise HTTPException(status_code=404, detail="User Not Found")
+
+    return user
+
+@router.patch("/users/{id}/role", response_model=UserResponse)
+async def update_user_role(
+    id: int,
+    role_data: UserRoleUpdate,
+    service: UserService = Depends(get_user_service),
+    current_user=Depends(require_permission(Permission.USERS_MANAGE)),
+):
+    if id == current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You cannot change your own role.",
+        )
+
+    try:
+        user = await service.update_user_role(id, role_data.role)
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=403,
+            detail=str(error),
+        )
+
+    if user is None:
+        raise HTTPException(
+            status_code=404,
+            detail="User Not Found",
+        )
 
     return user

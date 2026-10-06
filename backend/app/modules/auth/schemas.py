@@ -1,6 +1,13 @@
+from enum import Enum
 from datetime import datetime
-
 from pydantic import BaseModel, ConfigDict, EmailStr
+
+
+class UserRole(str, Enum):
+    ADMIN = "admin"
+    SALES_MANAGER = "sales_manager"
+    FIELD_REPRESENTATIVE = "field_representative"
+    COMPLIANCE_OFFICER = "compliance_officer"
 
 
 class UserCreate(BaseModel):
@@ -32,3 +39,6 @@ class PaginatedUserResponse(BaseModel):
     limit: int
     total: int
     pages: int
+
+class UserRoleUpdate(BaseModel):
+    role:UserRole
