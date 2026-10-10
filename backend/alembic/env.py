@@ -5,14 +5,16 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 import asyncio
 from logging.config import fileConfig
-
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
-
 from alembic import context
 from app.core.config import settings
 from app.db.base import Base
+from app.modules.auth.models import Users,UserSession
+from app.modules.interaction.models import Interaction
+from app.modules.followup.models import FollowUp
+from app.modules.hcp.models import HCP
 
 config = context.config
 
