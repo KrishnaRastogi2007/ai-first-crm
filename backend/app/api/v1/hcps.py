@@ -57,12 +57,12 @@ async def delete_hcp(
     service: HCPService = Depends(get_hcp_service),
     current_user=Depends(require_permission(Permission.HCP_DELETE)),
 ):
-    hcp = await service.delete_hcp(id)
+    hcp = await service.delete_hcp(
+        hcp_id=id,
+        current_user=current_user,
+    )
 
     if hcp is None:
-        raise HTTPException(
-            status_code=404,
-            detail="HCP Not Found"
-        )
+        raise HTTPException(status_code=404, detail="HCP Not Found")
 
     return {"message": "HCP Deleted Successfully"}

@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from app.modules.hcp.models import HCP
 from app.modules.hcp.repository import HCPRepository
 from app.modules.hcp.schemas import HCPCreate
@@ -52,13 +53,40 @@ class HCPService:
 
         return await self.repository.update(hcp)
 
-    async def delete_hcp(self, hcp_id: int):
+    
+    async def delete_hcp(self, hcp_id: int, current_user):
+        # Admin aur sales manager ka existing access preserve karo.
+        if current_user.role in {"admin", "sales_manager"}:
+            hcp = await self.repository.get_by_id(hcp_id)
 
-        hcp = await self.repository.get_by_id(hcp_id)
+            if hcp is None:
+                return None
 
-        if hcp is None:
-            return None
+            await self.repository.delete(hcp)
+            return True
 
-        await self.repository.delete(hcp)
+        # Field representative ke liye atomic ownership check + delete.
+        if current_user.role == "field_representative":
+            deleted = await self.repository.delete_if_assigned_to(
+                hcp_id=hcp_id,
+                user_id=current_user.id,
+            )
 
-        return True
+            if deleted:
+                return True
+
+            # Agar delete nahi hua, check karo HCP exist karta hai ya nahi.
+            hcp = await self.repository.get_by_id(hcp_id)
+
+            if hcp is None:
+                return None
+
+            raise HTTPException(
+                status_code=403,
+                detail="You can only delete HCPs assigned to you.",
+            )
+
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to delete HCPs.",
+        )

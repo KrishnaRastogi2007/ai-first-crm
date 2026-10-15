@@ -1,4 +1,4 @@
-from sqlalchemy import select,func
+from sqlalchemy import select,func,delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.hcp.models import HCP
@@ -48,6 +48,29 @@ class HCPRepository:
         await self.db.commit()
 
         return True
+
+
+    async def delete_if_assigned_to(
+        self,
+        hcp_id: int,
+        user_id: int,
+    ) -> bool:
+        statement = (
+            delete(HCP)
+            .where(
+                HCP.id == hcp_id,
+                HCP.assigned_to == user_id,
+            )
+            .returning(HCP.id)
+        )
+
+        result = await self.db.execute(statement)
+        deleted_id = result.scalar_one_or_none()
+
+        await self.db.commit()
+
+        return deleted_id is not None
+
 
     async def get_by_id(self, hcp_id: int):
         result = await self.db.execute(select(HCP).where(HCP.id == hcp_id))
