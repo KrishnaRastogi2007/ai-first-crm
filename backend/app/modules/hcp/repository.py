@@ -75,3 +75,11 @@ class HCPRepository:
     async def get_by_id(self, hcp_id: int):
         result = await self.db.execute(select(HCP).where(HCP.id == hcp_id))
         return result.scalar_one_or_none()
+
+
+    async def assign_hcp(self,hcp:HCP, assigned_to:int | None) -> HCP:
+        hcp.assigned_to = assigned_to
+        await self.db.commit()
+        await self.db.refresh()
+
+        return hcp

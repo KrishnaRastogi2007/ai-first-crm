@@ -20,8 +20,13 @@ oauth2_scheme = OAuth2PasswordBearer(
 
 
 def get_hcp_service(db: AsyncSession = Depends(get_db)):
-    repository = HCPRepository(db)
-    return HCPService(repository)
+    hcp_repository = HCPRepository(db)
+    user_repository = UserRepository(db)
+
+    return HCPService(
+        repository=hcp_repository,
+        user_repository=user_repository,
+    )
 
 
 def get_interaction_service(db: AsyncSession = Depends(get_db)):

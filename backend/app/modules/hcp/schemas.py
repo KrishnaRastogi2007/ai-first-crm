@@ -1,14 +1,3 @@
-"""
-API mein data ka structure/validation.
-
-Frontend
-   ↓
-Pydantic Schema
-   ↓
-FastAPI
-SCHEMA = API data
-"""
-
 from pydantic import BaseModel, ConfigDict
 
 
@@ -29,6 +18,7 @@ class HCPResponse(BaseModel):
     email: str | None = None
     phone: str | None = None
     organization: str | None = None
+    assigned_to: int | None = None
 
 
 class PaginatedHCPResponse(BaseModel):
@@ -37,3 +27,8 @@ class PaginatedHCPResponse(BaseModel):
     limit: int
     total: int
     pages: int
+
+
+class HCPAssignment(BaseModel):
+    assigned_to: int| None
+    

@@ -13,6 +13,7 @@ class Permission(str, Enum):
     HCP_CREATE = "hcps:create"
     HCP_UPDATE = "hcps:update"
     HCP_DELETE = "hcps:delete"
+    HCP_ASSIGN = "hcps:assign"
 
     INTERACTION_READ = "interactions:read"
     INTERACTION_CREATE = "interactions:create"
@@ -37,6 +38,7 @@ ROLE_PERMISSIONS = MappingProxyType(
                 Permission.HCP_CREATE,
                 Permission.HCP_UPDATE,
                 Permission.HCP_DELETE,
+                Permission.HCP_ASSIGN,
                 Permission.INTERACTION_READ,
                 Permission.INTERACTION_CREATE,
                 Permission.INTERACTION_UPDATE,
@@ -55,6 +57,7 @@ ROLE_PERMISSIONS = MappingProxyType(
                 Permission.HCP_CREATE,
                 Permission.HCP_UPDATE,
                 Permission.HCP_DELETE,
+                Permission.HCP_ASSIGN,
                 Permission.INTERACTION_READ,
                 Permission.INTERACTION_CREATE,
                 Permission.INTERACTION_UPDATE,

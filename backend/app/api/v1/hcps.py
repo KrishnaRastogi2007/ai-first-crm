@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException,Query
 from app.core.authorization import Permission
 from app.core.dependencies import get_hcp_service, require_permission
-from app.modules.hcp.schemas import HCPCreate, HCPResponse,PaginatedHCPResponse
+from app.modules.hcp.schemas import HCPCreate, HCPResponse,PaginatedHCPResponse,HCPAssignment
 from app.modules.hcp.service import HCPService
 
 router = APIRouter()
@@ -66,3 +66,25 @@ async def delete_hcp(
         raise HTTPException(status_code=404, detail="HCP Not Found")
 
     return {"message": "HCP Deleted Successfully"}
+
+@router.patch("/hcps/{id}/assignment", response_model=HCPResponse)
+async def assign_hcp(
+    id: int,
+    assignment_data: HCPAssignment,
+    service: HCPService = Depends(get_hcp_service),
+    current_user=Depends(
+        require_permission(Permission.HCP_ASSIGN)
+    ),
+):
+    hcp = await service.assign_hcp(
+        hcp_id=id,
+        assigned_to=assignment_data.assigned_to,
+    )
+
+    if hcp is None:
+        raise HTTPException(
+            status_code=404,
+            detail="HCP Not Found",
+        )
+
+    return hcp
