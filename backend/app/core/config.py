@@ -16,8 +16,14 @@ class Settings(BaseSettings):
 
     APP_NAME: str = Field(min_length=1)
     APP_ENV: Literal["development", "testing", "production"]
+    API_BASE_URL: str = Field(min_length=1)
 
     DATABASE_URL: str = Field(min_length=1)
+
+    GROQ_API_KEY : str | None
+    GROQ_MODEL : str = "llama-3.3-70b-versatile"
+    GROQ_TIMEOUT_SECONDS: int = Field(default=30, gt=0)
+    GROQ_MAX_RETRIES: int = Field(default=2, ge=0)
 
     JWT_SECRET_KEY: str = Field(min_length=32)
     JWT_REFRESH_SECRET_KEY: str = Field(min_length=32)

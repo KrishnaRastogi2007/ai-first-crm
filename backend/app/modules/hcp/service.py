@@ -1,3 +1,4 @@
+
 from fastapi import HTTPException
 
 from app.modules.auth.repository import UserRepository
@@ -33,6 +34,42 @@ class HCPService:
             "pages": pages,
         }
 
+    async def search_hcps(
+        self,
+        page: int,
+        limit: int,
+        name: str | None = None,
+        specialty: str | None = None,
+        keyword: str | None = None,
+        email: str | None = None,
+        organization: str | None = None,
+        email_exact: bool = False,
+        organization_exact: bool = False,
+    ):
+        offset = (page - 1) * limit
+
+        items, total = await self.repository.search_hcps(
+            limit=limit,
+            offset=offset,
+            name=name,
+            specialty=specialty,
+            keyword=keyword,
+            email=email,
+            organization=organization,
+            email_exact=email_exact,
+            organization_exact=organization_exact,
+        )
+
+        pages = (total + limit - 1) // limit
+
+        return {
+            "items": items,
+            "page": page,
+            "limit": limit,
+            "total": total,
+            "pages": pages,
+        }
+
     async def get_hcp_by_id(self, hcp_id: int):
         return await self.repository.get_by_id(hcp_id)
 
@@ -47,11 +84,34 @@ class HCPService:
 
         return await self.repository.create(hcp)
 
-    async def update_hcp(self, hcp_id: int, hcp_data: HCPCreate):
+    async def update_hcp(
+        self,
+        hcp_id: int,
+        hcp_data: HCPCreate,
+        current_user,
+    ):
         hcp = await self.repository.get_by_id(hcp_id)
 
         if hcp is None:
             return None
+
+        if current_user.role in {"admin", "sales_manager"}:
+            # Admin aur sales manager kisi bhi HCP ko update kar sakte hain.
+            pass
+
+        elif current_user.role == "field_representative":
+            # Field representative sirf assigned HCP update kar sakta hai.
+            if hcp.assigned_to != current_user.id:
+                raise HTTPException(
+                    status_code=403,
+                    detail="You can only update HCPs assigned to you.",
+                )
+
+        else:
+            raise HTTPException(
+                status_code=403,
+                detail="You do not have permission to update HCPs.",
+            )
 
         hcp.name = hcp_data.name
         hcp.specialty = hcp_data.specialty
@@ -62,7 +122,6 @@ class HCPService:
         return await self.repository.update(hcp)
 
     async def delete_hcp(self, hcp_id: int, current_user):
-        # Admin aur sales manager kisi bhi HCP ko delete kar sakte hain.
         if current_user.role in {"admin", "sales_manager"}:
             hcp = await self.repository.get_by_id(hcp_id)
 
@@ -72,7 +131,6 @@ class HCPService:
             await self.repository.delete(hcp)
             return True
 
-        # Field representative sirf apna assigned HCP delete kar sakta hai.
         if current_user.role == "field_representative":
             deleted = await self.repository.delete_if_assigned_to(
                 hcp_id=hcp_id,
@@ -82,7 +140,6 @@ class HCPService:
             if deleted:
                 return True
 
-            # Delete fail hua: HCP exist karta hai ya nahi, check karo.
             hcp = await self.repository.get_by_id(hcp_id)
 
             if hcp is None:
@@ -103,20 +160,17 @@ class HCPService:
         hcp_id: int,
         assigned_to: int | None,
     ):
-        # Step 1: HCP exist karta hai ya nahi.
         hcp = await self.repository.get_by_id(hcp_id)
 
         if hcp is None:
             return None
 
-        # Step 2: None ka matlab HCP unassign karna hai.
         if assigned_to is None:
             return await self.repository.assign_hcp(
                 hcp=hcp,
                 assigned_to=None,
             )
 
-        # Step 3: Target user ko database se fetch karo.
         user = await self.user_repository.get_by_id(assigned_to)
 
         if user is None:
@@ -125,21 +179,18 @@ class HCPService:
                 detail="Target user not found.",
             )
 
-        # Step 4: Inactive user ko assignment mat do.
         if not user.is_active:
             raise HTTPException(
                 status_code=400,
                 detail="Cannot assign HCP to an inactive user.",
             )
 
-        # Step 5: Sirf field representative ko assign karo.
         if user.role != "field_representative":
             raise HTTPException(
                 status_code=400,
                 detail="HCP can only be assigned to a field representative.",
             )
 
-        # Step 6: Valid assignment database mein save karo.
         return await self.repository.assign_hcp(
             hcp=hcp,
             assigned_to=user.id,

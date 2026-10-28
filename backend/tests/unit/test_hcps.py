@@ -8,17 +8,26 @@ from app.modules.hcp.service import HCPService
 
 @pytest.fixture
 def repository():
-    repo = SimpleNamespace(
+    return SimpleNamespace(
         get_by_id=AsyncMock(),
         delete=AsyncMock(),
         delete_if_assigned_to=AsyncMock(),
     )
-    return repo
 
 
 @pytest.fixture
-def service(repository):
-    return HCPService(repository)
+def user_repository():
+    return SimpleNamespace(
+        get_by_id=AsyncMock(),
+    )
+
+
+@pytest.fixture
+def service(repository, user_repository):
+    return HCPService(
+        repository=repository,
+        user_repository=user_repository,
+    )
 
 
 @pytest.mark.asyncio
